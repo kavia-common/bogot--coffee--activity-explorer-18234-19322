@@ -9,5 +9,8 @@ REACT_APP_GOOGLE_MAPS_API_KEY=<your_google_maps_js_api_key>
 
 Notes:
 - Do not commit your real keys.
-- The app uses Supabase for passwordless email login. The redirect URL uses window.location.origin.
-- Ensure the Supabase auth settings allow email OTP and the redirect URL.
+- The app uses Supabase for passwordless email login. Redirects point to `${SITE_URL}/auth/callback`.
+- Ensure the Supabase auth settings allow email OTP and these redirect URLs:
+  * http://localhost:3000/**
+  * Your production domain /**
+- Create schema/RLS via assets/supabase_schema.sql

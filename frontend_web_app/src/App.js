@@ -1,16 +1,9 @@
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { BrowserRouter, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import queryString from 'query-string';
-import { createClient } from '@supabase/supabase-js';
 import './App.css';
-
-/**
- * Supabase client (requires environment variables)
- * REACT_APP_SUPABASE_URL and REACT_APP_SUPABASE_KEY must be set in .env
- */
-const SUPABASE_URL = process.env.REACT_APP_SUPABASE_URL;
-const SUPABASE_KEY = process.env.REACT_APP_SUPABASE_KEY;
-export const supabase = createClient(SUPABASE_URL || '', SUPABASE_KEY || '');
+import { supabase, signInWithMagicLink } from './utils/supabase';
+import AuthCallback from './routes/AuthCallback';
 
 /**
  * Simple Google Maps loader using global script tag
@@ -93,17 +86,11 @@ function NavBar() {
   const [loading, setLoading] = useState(false);
 
   const signIn = async () => {
-    // PUBLIC_INTERFACE
-    // Simple magic link sign-in with Supabase
     setLoading(true);
     try {
       const email = window.prompt('Ingresa tu email para login / registro:');
       if (!email) return;
-      const siteUrl = window.location.origin;
-      const { error } = await supabase.auth.signInWithOtp({
-        email,
-        options: { emailRedirectTo: siteUrl }
-      });
+      const { error } = await signInWithMagicLink(email);
       if (error) alert(error.message);
       else alert('Revisa tu correo para el enlace de acceso.');
     } finally {
@@ -412,6 +399,9 @@ function Shell() {
         <Route path="/explore" element={<ExplorePage />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/auth" element={<AuthPage />} />
+        <Route path="/auth/callback" element={<AuthCallback />} />
+        <Route path="/auth/error" element={<div style={{padding:16}}>Ocurrió un error de autenticación. Reintenta.</div>} />
+        <Route path="/auth/reset-password" element={<div style={{padding:16}}>Ingresa tu nueva contraseña desde el enlace enviado.</div>} />
       </Routes>
     </div>
   );

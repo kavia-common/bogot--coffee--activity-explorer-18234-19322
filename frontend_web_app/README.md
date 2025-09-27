@@ -12,9 +12,22 @@ Responsive React app to discover cafés and plans in Bogotá with an Airbnb-styl
 Copy `.env.example` to `.env` and fill keys:
 - REACT_APP_SUPABASE_URL
 - REACT_APP_SUPABASE_KEY
+- REACT_APP_SITE_URL (optional; defaults to window.location.origin)
 - REACT_APP_GOOGLE_MAPS_API_KEY (optional, enables real map)
 
 See ENVIRONMENT.md for details.
+
+IMPORTANT: Supabase Configuration
+1. In Supabase Dashboard > Authentication > URL Configuration
+   - Set Site URL to your prod domain, add redirects:
+     * http://localhost:3000/**
+     * https://yourapp.com/**
+2. Enable Email (Magic Link) provider
+3. Run the SQL in assets/supabase_schema.sql to create tables and RLS
+4. Roles:
+   - profiles.role supports: user, cafe_owner, superadmin
+   - Promote via: update public.profiles set role='cafe_owner' where id='<uuid>';
+5. Callback route is /auth/callback
 
 ## Run
 - npm install
